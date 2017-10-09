@@ -1,0 +1,49 @@
+<style lang="less">
+  .counter {
+    text-align: left;
+    font-size: 12px;
+  }
+  .count {
+    font-size: 18px;
+    font-weight: bold;
+  }
+</style>
+
+<template>
+  <view class="counter">
+    <button @tap="plus" size="mini">  +  </button>
+    <text class="count"> {{ num }} </text>
+    <button @tap="minus" size="mini">  -  </button>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Counter extends wepy.component {
+    props = {
+      num: {
+        type: [Number, String],
+        coerce: function (v) {
+          return +v
+        },
+        default: 1
+      }
+    }
+
+    watch = {
+      num (curVal, oldVal) {
+        console.log(`旧值：${oldVal}，新值：${curVal}`)
+      }
+    }
+
+    methods = {
+      plus () {
+        this.$emit('count-plus', this.num)
+      },
+      minus () {
+        this.$emit('count-minus', this.num)
+      }
+    }
+  }
+</script>

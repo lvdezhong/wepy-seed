@@ -1,0 +1,88 @@
+<style lang="less">
+  .userinfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .userinfo-avatar {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+  }
+
+  .userinfo-nickname {
+    color: #aaa;
+  }
+</style>
+
+<template>
+  <view class="container">
+
+    <view class="userinfo" @tap="handleViewTap">
+      <image class="userinfo-avatar" src="{{ userInfo.avatarUrl }}" background-size="cover"/>
+      <view class="userinfo-nickname">{{ userInfo.nickName }}</view>
+    </view>
+
+    <panel>
+      <view class="title" slot="title">测试组件</view>
+      <view class="counterview">
+        <counter :num.sync="count"/>
+      </view>
+    </panel>
+
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import Panel from '../components/panel'
+  import Counter from '../components/counter'
+  import actions from '../store/actions'
+  import { connect } from 'wepy-redux'
+
+  @connect({
+    count(state) {
+      return state.goods.count
+    }
+  }, {
+    countPlus: actions.countPlus,
+    countMinus: actions.countMinus
+  })
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: 'demo'
+    }
+
+    components = {
+      panel: Panel,
+      counter: Counter
+    }
+
+    data = {
+      userInfo: {
+        nickName: '加载中...'
+      }
+    }
+
+    events = {
+      'count-plus': (val) => {
+        this.methods.countPlus()
+      },
+      'count-minus': (val) => {
+        this.methods.countMinus()
+      }
+    }
+
+    onLoad() {
+      this.$parent.getUserInfo((userInfo) => {
+        console.log(userInfo)
+        if (userInfo) {
+          this.userInfo = userInfo
+        }
+        this.$apply()
+      })
+    }
+  }
+</script>
